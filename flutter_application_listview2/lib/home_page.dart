@@ -11,29 +11,21 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  bool isEnable = false;
+  late TextEditingController controller;
+  List<Pacient> pacients = [];
+  String name = '';
 
-  List<Pacient> pacients = [
-    Pacient(
-      name: 'Paciente 0',
-      email: 'email@email.com',
-    ),
-    Pacient(
-      name: 'Paciente 1',
-      email: 'email@email.com',
-    ),
-    Pacient(
-      name: 'Paciente 2',
-      email: 'email@email.com',
-    ),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    controller = TextEditingController();
+  }
 
-  void _incrementList() {
+  void _incrementList(String nome) {
     setState(() {
       pacients.add(
         Pacient(
-          name: 'Novo Paciente',
-          email: 'email@emai',
+          name: nome,
         ),
       );
     });
@@ -43,15 +35,46 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Lista de Pacientes"),
+        title: const Text('Lista de Pacientes'),
       ),
       body: _buildListView(context),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementList,
-        tooltip: 'Increment',
+        onPressed: () async {
+          final name = await openDialog();
+          if (name == null || name.isEmpty) return;
+          setState(() {
+            this.name = name;
+          });
+          _incrementList(name);
+        },
+        tooltip: 'Adicionar',
         child: const Icon(Icons.add),
       ),
     );
+  }
+
+  Future openDialog() => showDialog(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text('Dados do Paciente'),
+          content: TextField(
+            autofocus: true,
+            decoration: const InputDecoration(hintText: 'Digite o nome'),
+            controller: controller,
+            onSubmitted: (_) => submit(),
+          ),
+          actions: [
+            TextButton(
+              child: const Text('ADICIONAR'),
+              onPressed: submit,
+            ),
+          ],
+        ),
+      );
+
+  void submit() {
+    Navigator.of(context).pop(controller.text);
+    controller.clear();
   }
 
   ListView _buildListView(BuildContext context) {
@@ -72,7 +95,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 title: Text(
                   paciente.name,
                 ),
-                subtitle: Text(paciente.email),
+                subtitle: const Text("Clique para mais informações"),
                 onTap: () {
                   Navigator.push(
                     context,
@@ -88,10 +111,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     icon: const Icon(Icons.edit),
                     color: Colors.purple,
                     onPressed: () {
-                      setState(() {
-                        paciente.name = 'teste teste';
-                        paciente.email = "teste teste";
-                      });
+                      setState(() {});
                     },
                   ),
                   IconButton(
@@ -115,10 +135,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
 class Pacient {
   String name;
-  String email;
 
   Pacient({
     required this.name,
-    required this.email,
   });
 }
