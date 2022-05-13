@@ -10,10 +10,13 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
+enum Sexo { masculino, feminino }
+
 class _MyHomePageState extends State<MyHomePage> {
   late TextEditingController controller;
   List<Pacient> pacients = [];
   String name = '';
+  Sexo s = Sexo.masculino;
 
   @override
   void initState() {
@@ -40,6 +43,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: _buildListView(context),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
+          controller.value = TextEditingValue.empty;
           final name = await openDialog();
           if (name == null || name.isEmpty) return;
           setState(() {
@@ -57,16 +61,44 @@ class _MyHomePageState extends State<MyHomePage> {
         context: context,
         builder: (BuildContext context) => AlertDialog(
           title: const Text('Dados do Paciente'),
-          content: TextField(
-            autofocus: true,
-            decoration: const InputDecoration(hintText: 'Digite o nome'),
-            controller: controller,
-            onSubmitted: (_) => submit(),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              TextField(
+                autofocus: true,
+                decoration: const InputDecoration(hintText: 'Digite o nome'),
+                controller: controller,
+              ),
+              ListTile(
+                title: Text('masc'),
+                leading: Radio<Sexo>(
+                  value: Sexo.masculino,
+                  groupValue: s,
+                  onChanged: (value) => setState(() {
+                    s = value!;
+                  }),
+                ),
+              ),
+              ListTile(
+                title: Text('fem'),
+                leading: Radio<Sexo>(
+                  value: Sexo.feminino,
+                  groupValue: s,
+                  onChanged: (value) => setState(() {
+                    s = value!;
+                  }),
+                ),
+              ),
+            ],
           ),
           actions: [
-            TextButton(
-              child: const Text('ADICIONAR'),
-              onPressed: submit,
+            Column(
+              children: <Widget>[
+                TextButton(
+                  child: const Text('ADICIONAR'),
+                  onPressed: submit,
+                ),
+              ],
             ),
           ],
         ),
@@ -74,7 +106,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void submit() {
     Navigator.of(context).pop(controller.text);
-    controller.clear();
   }
 
   ListView _buildListView(BuildContext context) {
@@ -110,8 +141,13 @@ class _MyHomePageState extends State<MyHomePage> {
                   IconButton(
                     icon: const Icon(Icons.edit),
                     color: Colors.purple,
-                    onPressed: () {
-                      setState(() {});
+                    onPressed: () async {
+                      controller.value = TextEditingValue(text: paciente.name);
+                      final name = await openDialog();
+                      if (name == null || name.isEmpty) return;
+                      setState(() {
+                        paciente.name = name;
+                      });
                     },
                   ),
                   IconButton(
