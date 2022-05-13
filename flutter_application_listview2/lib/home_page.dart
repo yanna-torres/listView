@@ -24,11 +24,12 @@ class _MyHomePageState extends State<MyHomePage> {
     controller = TextEditingController();
   }
 
-  void _incrementList(String nome) {
+  void _incrementList(String nome, String sexo) {
     setState(() {
       pacients.add(
         Pacient(
           name: nome,
+          sex: sexo,
         ),
       );
     });
@@ -44,12 +45,19 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           controller.value = TextEditingValue.empty;
+          s = Sexo.masculino;
           final name = await openDialog();
+          final sex;
+          if (s == Sexo.feminino) {
+            sex = 'Feminino';
+          } else {
+            sex = 'Masculino';
+          }
           if (name == null || name.isEmpty) return;
           setState(() {
             this.name = name;
           });
-          _incrementList(name);
+          _incrementList(name, sex);
         },
         tooltip: 'Adicionar',
         child: const Icon(Icons.add),
@@ -70,7 +78,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 controller: controller,
               ),
               ListTile(
-                title: Text('masc'),
+                title: const Text('Masculino'),
                 leading: Radio<Sexo>(
                   value: Sexo.masculino,
                   groupValue: s,
@@ -80,7 +88,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
               ListTile(
-                title: Text('fem'),
+                title: const Text('Feminino'),
                 leading: Radio<Sexo>(
                   value: Sexo.feminino,
                   groupValue: s,
@@ -95,7 +103,7 @@ class _MyHomePageState extends State<MyHomePage> {
             Column(
               children: <Widget>[
                 TextButton(
-                  child: const Text('ADICIONAR'),
+                  child: const Text('SALVAR'),
                   onPressed: submit,
                 ),
               ],
@@ -171,8 +179,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
 class Pacient {
   String name;
+  String sex;
 
   Pacient({
     required this.name,
+    required this.sex,
   });
 }
