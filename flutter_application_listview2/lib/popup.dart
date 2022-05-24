@@ -80,12 +80,11 @@ class _PopupWidgetState extends State<PopupWidget> {
   }
 
   void submit() {
-    Navigator.of(context).pop();
     if (_mitem == menuitem.feminino) {
       sex = 'Feminino';
     } else {
       sex = 'Masculino';
     }
-    // incrementList ??????
+    Navigator.of(context).pop();
   }
 }
