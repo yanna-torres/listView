@@ -1,7 +1,7 @@
 // ignore_for_file: must_be_immutable
 
 import 'package:flutter/material.dart';
-import 'package:flutter_application_listview2/home_page.dart';
+import 'home_page.dart';
 
 class DetailsPage extends StatefulWidget {
   final int index;
