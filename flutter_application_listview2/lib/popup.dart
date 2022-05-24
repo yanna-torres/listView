@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
 
+// ignore: must_be_immutable
 class PopupWidget extends StatefulWidget {
   const PopupWidget({Key? key}) : super(key: key);
 
   @override
+  // ignore: no_logic_in_create_state
   _PopupWidgetState createState() => _PopupWidgetState();
 }
 
 enum menuitem { feminino, masculino }
 
 class _PopupWidgetState extends State<PopupWidget> {
-	TextEditingController controller = TextEditingController();
+  TextEditingController controller = TextEditingController();
   menuitem? _mitem = menuitem.feminino;
+
+  String sex = '';
+
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -21,24 +26,18 @@ class _PopupWidgetState extends State<PopupWidget> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Padding(
-                padding: EdgeInsets.all(10.0),
-                child: Text('Dados do paciente',
-                    style:
-                        TextStyle(fontSize: 20, fontWeight: FontWeight.w600)),
-              ),
-            ],
+          const Padding(
+            padding: EdgeInsets.all(10.0),
+            child: Text('Dados do paciente',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600)),
           ),
-					Padding(
-             padding: const EdgeInsets.all(8.0),
-             child: TextField(
-	             autofocus: true,
-	             decoration: const InputDecoration(hintText: 'Digite o nome'),
-	             controller: controller,
-	          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              autofocus: true,
+              decoration: const InputDecoration(hintText: 'Digite o nome'),
+              controller: controller,
+            ),
           ),
           ListTile(
             title: const Text('Feminino'),
@@ -68,14 +67,24 @@ class _PopupWidgetState extends State<PopupWidget> {
           ),
           Center(
             child: TextButton(
-							child: const Text('SALVAR', style: TextStyle(fontWeight: FontWeight.bold)),
+              child: const Text('SALVAR',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
               onPressed: () {
-                Navigator.of(context).pop();
+                submit();
               },
             ),
           ),
         ],
       ),
     );
+  }
+
+  void submit() {
+    Navigator.of(context).pop();
+    if (_mitem == menuitem.feminino) {
+      sex = 'Feminino';
+    } else {
+      sex = 'Masculino';
+    }
   }
 }
