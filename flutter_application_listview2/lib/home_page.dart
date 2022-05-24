@@ -1,124 +1,44 @@
 import 'package:flutter/material.dart';
-import 'details.dart';
+import 'popup.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
+
   final String title;
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-enum Sexo { masculino, feminino }
-
 class _MyHomePageState extends State<MyHomePage> {
-  late TextEditingController controller;
   List<Pacient> pacients = [];
-  String name = '';
-  Sexo s = Sexo.masculino;
 
-  @override
-  void initState() {
-    super.initState();
-    controller = TextEditingController();
-  }
-
-  void _incrementList(String nome, String sexo) {
+  void _incrementList() {
     setState(() {
-      pacients.add(
-        Pacient(
-          name: nome,
-          sex: sexo,
-        ),
-      );
+      pacients.add(Pacient(),);
     });
   }
-
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Lista de Pacientes'),
       ),
-      body: _buildListView(context),
+      body:_buildListView(context),
       floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          controller.value = TextEditingValue.empty;
-          s = Sexo.masculino;
-          final name = await openDialog();
-          final sex;
-          if (s == Sexo.feminino) {
-            sex = 'Feminino';
-          } else {
-            sex = 'Masculino';
-          }
-          if (name == null || name.isEmpty) return;
-          setState(() {
-            this.name = name;
-          });
-          _incrementList(name, sex);
+        onPressed: () {
+					showDialog(
+              context: context,
+              builder: (BuildContext context) => const PopupWidget(),
+					);
         },
         tooltip: 'Adicionar',
         child: const Icon(Icons.add),
       ),
     );
   }
-
-  Future openDialog() => showDialog(
-        context: context,
-        builder: (BuildContext context) => AlertDialog(
-          title: const Text('Dados do Paciente'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              TextField(
-                autofocus: true,
-                decoration: const InputDecoration(hintText: 'Digite o nome'),
-                controller: controller,
-<<<<<<< HEAD
-                onSubmitted: (_) => submit(),
-=======
-              ),
-              ListTile(
-                title: const Text('Masculino'),
-                leading: Radio<Sexo>(
-                  value: Sexo.masculino,
-                  groupValue: s,
-                  onChanged: (value) => setState(() {
-                    s = value!;
-                  }),
-                ),
-              ),
-              ListTile(
-                title: const Text('Feminino'),
-                leading: Radio<Sexo>(
-                  value: Sexo.feminino,
-                  groupValue: s,
-                  onChanged: (value) => setState(() {
-                    s = value!;
-                  }),
-                ),
->>>>>>> addb5c650cd5970c75d5a93d4a45c90078b1dd7e
-              ),
-            ],
-          ),
-          actions: [
-            Column(
-              children: <Widget>[
-                TextButton(
-                  child: const Text('SALVAR'),
-                  onPressed: submit,
-                ),
-              ],
-            ),
-          ],
-        ),
-      );
-
-  void submit() {
-    Navigator.of(context).pop(controller.text);
-  }
-
+  
   ListView _buildListView(BuildContext context) {
     return ListView.builder(
       itemCount: pacients.length,
@@ -134,33 +54,17 @@ class _MyHomePageState extends State<MyHomePage> {
                   backgroundImage: NetworkImage(
                       'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'),
                 ),
-                title: Text(
-                  paciente.name,
-                ),
+                title: Text('a'),
                 subtitle: const Text("Clique para mais informações"),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: ((context) => DetailsPage(index, paciente)),
-                    ),
-                  );
-                },
+                onTap: () {},
               ),
               Row(
                 children: <Widget>[
                   IconButton(
                     icon: const Icon(Icons.edit),
                     color: Colors.purple,
-                    onPressed: () async {
-<<<<<<< HEAD
-=======
-                      controller.value = TextEditingValue(text: paciente.name);
->>>>>>> addb5c650cd5970c75d5a93d4a45c90078b1dd7e
-                      final name = await openDialog();
-                      if (name == null || name.isEmpty) return;
+                    onPressed: () {
                       setState(() {
-                        paciente.name = name;
                       });
                     },
                   ),
@@ -182,13 +86,5 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
-
 class Pacient {
-  String name;
-  String sex;
-
-  Pacient({
-    required this.name,
-    required this.sex,
-  });
 }
