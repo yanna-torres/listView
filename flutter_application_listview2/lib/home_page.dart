@@ -3,7 +3,6 @@ import 'details.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
-
   final String title;
 
   @override
@@ -57,11 +56,16 @@ class _MyHomePageState extends State<MyHomePage> {
         context: context,
         builder: (BuildContext context) => AlertDialog(
           title: const Text('Dados do Paciente'),
-          content: TextField(
-            autofocus: true,
-            decoration: const InputDecoration(hintText: 'Digite o nome'),
-            controller: controller,
-            onSubmitted: (_) => submit(),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              TextField(
+                autofocus: true,
+                decoration: const InputDecoration(hintText: 'Digite o nome'),
+                controller: controller,
+                onSubmitted: (_) => submit(),
+              ),
+            ],
           ),
           actions: [
             TextButton(
@@ -110,8 +114,12 @@ class _MyHomePageState extends State<MyHomePage> {
                   IconButton(
                     icon: const Icon(Icons.edit),
                     color: Colors.purple,
-                    onPressed: () {
-                      setState(() {});
+                    onPressed: () async {
+                      final name = await openDialog();
+                      if (name == null || name.isEmpty) return;
+                      setState(() {
+                        paciente.name = name;
+                      });
                     },
                   ),
                   IconButton(
