@@ -1,7 +1,7 @@
-// ignore_for_file: camel_case_types
+// ignore_for_file: camel_case_types, must_be_immutable
 
 import 'package:flutter/material.dart';
-import 'pacient.dart';
+import 'data/pacient.dart';
 
 class listView extends StatefulWidget {
   List<Pacient> pacients;
@@ -9,6 +9,7 @@ class listView extends StatefulWidget {
   listView({Key? key, required this.pacients}) : super(key: key);
 
   @override
+  // ignore: no_logic_in_create_state
   State<listView> createState() => _listViewState(pacients: pacients);
 }
 

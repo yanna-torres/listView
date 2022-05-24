@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'data/pacient.dart';
 import 'list.dart';
-import 'pacient.dart';
 import 'popup.dart';
 
 class MyHomePage extends StatefulWidget {
