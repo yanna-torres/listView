@@ -14,6 +14,8 @@ class listView extends StatefulWidget {
 }
 
 class _listViewState extends State<listView> {
+  TextEditingController controller = TextEditingController();
+  TextEditingController controller2 = TextEditingController();
   List<Pacient> pacients;
 
   _listViewState({required this.pacients});
@@ -29,14 +31,12 @@ class _listViewState extends State<listView> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               ListTile(
-                leading: const CircleAvatar(
-                  radius: 28,
-                  backgroundImage: NetworkImage(
-                      'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'),
+                leading: const Icon(
+                  Icons.account_box,
+                  color: Colors.purple,
                 ),
                 title: Text(paciente.name),
                 subtitle: Text(paciente.sex),
-                onTap: () {},
               ),
               Row(
                 children: <Widget>[
@@ -44,7 +44,7 @@ class _listViewState extends State<listView> {
                     icon: const Icon(Icons.edit),
                     color: Colors.purple,
                     onPressed: () {
-                      setState(() {});
+                      openDialog(paciente);
                     },
                   ),
                   IconButton(
@@ -63,5 +63,49 @@ class _listViewState extends State<listView> {
         );
       },
     );
+  }
+
+  Future openDialog(Pacient pacient) => showDialog(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text('Dados do Paciente'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              TextField(
+                autofocus: true,
+                controller: controller,
+              ),
+              TextField(
+                autofocus: true,
+                controller: controller2,
+              ),
+            ],
+          ),
+          actions: [
+            Column(
+              children: <Widget>[
+                TextButton(
+                  child: const Text('ADICIONAR'),
+                  onPressed: submit(pacient),
+                ),
+              ],
+            ),
+          ],
+        ),
+      );
+
+  submit(Pacient paciente) {
+    _update(paciente);
+    Navigator.of(context).pop();
+    controller.clear();
+    controller2.clear();
+  }
+
+  _update(Pacient paciente) {
+    setState(() {
+      paciente.name = controller.text;
+      paciente.sex = controller2.text;
+    });
   }
 }
