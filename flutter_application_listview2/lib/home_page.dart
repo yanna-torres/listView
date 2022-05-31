@@ -12,7 +12,9 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   TextEditingController controller = TextEditingController();
+  TextEditingController controllerNew = TextEditingController();
   String dropdownValue = 'Feminino';
+  String dropdownNewValue = 'Feminino';
   List<Pacient> pacients = [];
 
   @override
@@ -27,9 +29,7 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           await openDialog();
-          setState(() {
-            _incrementList();
-          });
+          _incrementList(controller.text, dropdownValue);
         },
         tooltip: 'Adicionar',
         child: const Icon(Icons.add),
@@ -37,7 +37,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  openDialog() => showDialog(
+  Future openDialog() => showDialog(
       context: context,
       builder: (BuildContext context) {
         return StatefulBuilder(
@@ -88,8 +88,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     TextButton(
                       child: const Text('ADICIONAR'),
                       onPressed: () {
-                        _incrementList();
-                        Navigator.of(context).pop();
+                        submit();
                       },
                     ),
                   ],
@@ -100,9 +99,18 @@ class _MyHomePageState extends State<MyHomePage> {
         );
       });
 
-  _incrementList() {
+  void submit() {
+    Navigator.of(context).pop();
+  }
+
+  _incrementList(String nome, String sexo) {
     setState(() {
-      pacients.add(Pacient(name: controller.text, sex: dropdownValue));
+      pacients.add(
+        Pacient(
+          name: nome,
+          sex: sexo,
+        ),
+      );
     });
   }
 
@@ -111,8 +119,6 @@ class _MyHomePageState extends State<MyHomePage> {
       itemCount: pacients.length,
       itemBuilder: (context, index) {
         final paciente = pacients[index];
-        controller = TextEditingController(text: paciente.name);
-        dropdownValue = paciente.sex;
         return Card(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -130,7 +136,16 @@ class _MyHomePageState extends State<MyHomePage> {
                   IconButton(
                     icon: const Icon(Icons.edit),
                     color: Colors.purple,
-                    onPressed: () {},
+                    onPressed: () async {
+                      controllerNew =
+                          TextEditingController(text: paciente.name);
+                      dropdownNewValue = paciente.sex;
+                      await openDialogUpdate();
+                      setState(() {
+                        pacients[index].name = controllerNew.text;
+                        pacients[index].sex = dropdownNewValue;
+                      });
+                    },
                   ),
                   IconButton(
                     icon: const Icon(Icons.delete),
@@ -149,4 +164,66 @@ class _MyHomePageState extends State<MyHomePage> {
       },
     );
   }
+
+  Future openDialogUpdate() => showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: ((context, setState) {
+            return AlertDialog(
+              title: const Text('Dados do Paciente'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  TextField(
+                    autofocus: true,
+                    decoration:
+                        const InputDecoration(hintText: 'Digite o nome'),
+                    controller: controllerNew,
+                  ),
+                  Row(
+                    children: [
+                      const Text('Sexo'),
+                      DropdownButton<String>(
+                        value: dropdownNewValue,
+                        icon: const Icon(Icons.arrow_downward),
+                        elevation: 16,
+                        style: const TextStyle(color: Colors.deepPurple),
+                        underline: Container(
+                          height: 2,
+                          color: Colors.deepPurpleAccent,
+                        ),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            dropdownNewValue = newValue!;
+                          });
+                        },
+                        items: <String>['Feminino', 'Masculino']
+                            .map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              actions: [
+                Column(
+                  children: <Widget>[
+                    TextButton(
+                      child: const Text('SALVAR'),
+                      onPressed: () {
+                        submit();
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            );
+          }),
+        );
+      });
 }
